@@ -217,7 +217,9 @@ app.post('/api/refresh', async (req, res) => {
   const data = await recopilarAutomatico();
   res.json(data);
 });
-
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 app.get('/api/status', (req, res) => {
   res.json({
     cache_auto: cache.automatico ? {
