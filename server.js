@@ -82,17 +82,14 @@ const CUENTAS_X = ['AnthropicAI','OpenAI','sama','GoogleDeepMind','ylecun','Mist
 
 async function buscarTwitterUsuario(handle) {
   try {
-    const r = await axios.get('https://api.scrapecreators.com/v2/twitter/user/tweets', {
-      params: { handle },
-      headers: { 'x-api-key': SC_KEY },
-      timeout: 10000
-    });
-    const tweets = r.data?.tweets || r.data?.data || r.data?.results || [];
-    return tweets.slice(0,2).map(t => ({
-      texto: t.text || t.full_text || t.legacy?.full_text || '',
-      url:   `https://x.com/${handle}/status/${t.id || t.id_str || ''}`,
-      likes: t.favorite_count || t.legacy?.favorite_count || t.likes || 0,
-      retweets: t.retweet_count || t.legacy?.retweet_count || 0,
+    const r = await axios.post('https://creador-apis-production.up.railway.app/api/buscar', {
+      handle, plataforma: 'twitter'
+    }, { timeout: 30000 });
+    return (r.data?.datos || []).slice(0,2).map(t => ({
+      texto: t.texto || '',
+      url: t.url || '',
+      likes: t.likes || 0,
+      retweets: t.retweets || 0,
       fuente: `X/@${handle}`,
       tipo: 'x'
     })).filter(t => t.texto.length > 10);
@@ -102,16 +99,14 @@ async function buscarTwitterUsuario(handle) {
 // ─── TIKTOK (MANUAL) ─────────────────────────────────────────────────────────
 async function buscarTikTok(keyword) {
   try {
-    const r = await axios.get('https://api.scrapecreators.com/v1/tiktok/search/top', {
-      params: { query: keyword },
-      headers: { 'x-api-key': SC_KEY },
-      timeout: 10000
-    });
-    return (r.data?.items || []).slice(0,5).map(i => ({
-      texto: i.desc || i.title || '',
-      url:   i.video?.play || '',
-      likes: i.statistics?.digg_count || 0,
-      vistas: i.statistics?.play_count || 0,
+    const r = await axios.post('https://creador-apis-production.up.railway.app/api/buscar', {
+      keyword, plataforma: 'tiktok'
+    }, { timeout: 30000 });
+    return (r.data?.datos || []).slice(0,5).map(i => ({
+      texto: i.titulo || '',
+      url: i.url || '',
+      likes: i.likes || 0,
+      vistas: i.vistas || 0,
       fuente: 'TikTok',
       tipo: 'tiktok'
     })).filter(i => i.texto);
@@ -121,15 +116,12 @@ async function buscarTikTok(keyword) {
 // ─── LINKEDIN (MANUAL) ───────────────────────────────────────────────────────
 async function buscarLinkedIn(keyword) {
   try {
-    const r = await axios.get('https://api.scrapecreators.com/v1/linkedin/search/posts', {
-      params: { query: keyword },
-      headers: { 'x-api-key': SC_KEY },
-      timeout: 10000
-    });
-    const posts = r.data?.posts || r.data?.items || r.data?.results || [];
-    return posts.slice(0,5).map(p => ({
-      texto: p.text || p.content || p.title || '',
-      likes: p.numLikes || p.likes || 0,
+    const r = await axios.post('https://creador-apis-production.up.railway.app/api/buscar', {
+      keyword, plataforma: 'linkedin'
+    }, { timeout: 30000 });
+    return (r.data?.datos || []).slice(0,5).map(p => ({
+      texto: p.titulo || p.texto || '',
+      likes: p.likes || 0,
       fuente: 'LinkedIn',
       tipo: 'linkedin'
     })).filter(p => p.texto);
