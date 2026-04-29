@@ -6,198 +6,252 @@
 <title>Buscador de Tendencias IA</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh;
-    color: white;
-    padding: 24px;
-  }
-  .header { text-align: center; margin-bottom: 32px; }
-  .header h1 {
-    font-size: 32px;
-    background: linear-gradient(90deg, #00d2ff, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-  }
-  .header p { color: #94a3b8; font-size: 14px; }
-  .input-area {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-  }
-  .input-area label { display: block; font-size: 14px; color: #94a3b8; margin-bottom: 8px; }
-  input[type="text"] {
-    width: 100%;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    padding: 12px;
-    color: white;
-    font-size: 15px;
-    font-family: inherit;
-  }
+  body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; color: white; padding: 20px; }
+  .header { text-align: center; margin-bottom: 24px; }
+  .header h1 { font-size: 28px; background: linear-gradient(90deg, #00d2ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+  .header p { color: #94a3b8; font-size: 13px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #94a3b8; cursor: pointer; font-size: 14px; text-align: center; transition: all 0.2s; }
+  .tab.activo { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: transparent; }
+  .panel { display: none; }
+  .panel.activo { display: block; }
+  .card-area { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .fuentes-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .fuente-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+  .badge-rss  { background: rgba(34,197,94,0.2); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-yt   { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-x    { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  .badge-tk   { background: rgba(251,146,60,0.2); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+  .badge-li   { background: rgba(14,165,233,0.2); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+  .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.9; } .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-outline { background: transparent; border: 1px solid rgba(168,85,247,0.5); color: #c4b5fd; margin-top: 8px; }
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+  input[type="text"] { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; color: white; font-size: 14px; font-family: inherit; }
   input[type="text"]:focus { outline: none; border-color: #a855f7; }
-  .btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: opacity 0.2s;
-  }
-  .btn:hover { opacity: 0.9; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .ejemplos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-  .ejemplo {
-    padding: 6px 12px;
-    background: rgba(168,85,247,0.2);
-    border: 1px solid rgba(168,85,247,0.3);
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    color: #c4b5fd;
-  }
-  .ejemplo:hover { background: rgba(168,85,247,0.4); }
-  .resultados { display: flex; flex-direction: column; gap: 16px; }
-  .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 20px;
-  }
-  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .card-nombre { font-size: 18px; font-weight: 700; }
-  .score { padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-  .score-alto { background: rgba(34,197,94,0.2); color: #4ade80; }
-  .score-medio { background: rgba(234,179,8,0.2); color: #facc15; }
-  .score-bajo { background: rgba(239,68,68,0.2); color: #f87171; }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; margin-right: 6px; }
-  .es-real { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-  .es-humo { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
-  .es-viral { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
-  .resumen { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
-  .areas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .area-tag { padding: 3px 10px; background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.3); border-radius: 20px; font-size: 12px; color: #a5b4fc; }
-  .como-ayuda { background: rgba(0,0,0,0.2); border-left: 3px solid #a855f7; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; color: #94a3b8; }
-  .fuente-tag { font-size: 12px; color: #64748b; margin-top: 8px; }
-  .loading { text-align: center; padding: 40px; color: #94a3b8; }
-  .spinner { width: 40px; height: 40px; border: 3px solid rgba(168,85,247,0.3); border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+  .checks { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .check-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #94a3b8; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+  .check-btn.sel { background: rgba(168,85,247,0.3); border-color: rgba(168,85,247,0.6); color: #c4b5fd; }
+  .resultados { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .res-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; }
+  .res-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .res-fuente { font-size: 11px; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .res-score { font-size: 15px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .score-a { background: rgba(34,197,94,0.2); color: #4ade80; }
+  .score-m { background: rgba(234,179,8,0.2); color: #facc15; }
+  .score-b { background: rgba(239,68,68,0.2); color: #f87171; }
+  .res-nombre { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .res-texto { color: #cbd5e1; font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+  .res-meta { display: flex; gap: 12px; font-size: 12px; color: #64748b; flex-wrap: wrap; align-items: center; }
+  .res-meta a { color: #a5b4fc; text-decoration: none; }
+  .res-meta a:hover { text-decoration: underline; }
+  .badges-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge-humo  { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 2px 9px; border-radius: 20px; font-size: 11px; }
+  .badge-real  { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); padding: 2px 9px; border-radius: 20px; font-size: 11px; }
+  .badge-viral { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); padding: 2px 9px; border-radius: 20px; font-size: 11px; }
+  .consejo { background: rgba(0,0,0,0.2); border-left: 3px solid #a855f7; padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 12px; color: #94a3b8; margin-top: 8px; }
+  .loading { text-align: center; padding: 32px; color: #94a3b8; }
+  .spinner { width: 36px; height: 36px; border: 3px solid rgba(168,85,247,0.3); border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .fecha { color: #64748b; font-size: 12px; text-align: center; margin-bottom: 24px; }
-  .stats { display: flex; gap: 12px; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+  .status-bar { font-size: 11px; color: #64748b; text-align: center; margin-bottom: 12px; }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .dot-green { background: #4ade80; } .dot-yellow { background: #facc15; } .dot-gray { background: #64748b; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>🔍 Buscador de Tendencias IA</h1>
-  <p>Tu agente personal que filtra lo útil del ruido</p>
+  <p id="statusBar" class="status-bar">Cargando estado del sistema...</p>
 </div>
 
-<p class="fecha" id="fecha"></p>
+<div class="tabs">
+  <div class="tab activo" onclick="cambiarTab('auto')">📡 Automático</div>
+  <div class="tab" onclick="cambiarTab('manual')">🔎 Búsqueda Manual</div>
+</div>
 
-<div class="input-area">
-  <label>Escribe qué tendencia quieres buscar:</label>
-  <input type="text" id="keyword" placeholder="Ejemplo: inteligencia artificial, ChatGPT, agentes IA..."/>
-  
-  <label style="margin-top: 16px;">Ejemplos rápidos:</label>
-  <div class="ejemplos">
-    <span class="ejemplo" onclick="buscar('ChatGPT imagenes')">🎨 ChatGPT imágenes</span>
-    <span class="ejemplo" onclick="buscar('agentes IA autonomos')">🤖 Agentes autónomos</span>
-    <span class="ejemplo" onclick="buscar('inteligencia artificial negocios')">💼 IA en negocios</span>
-    <span class="ejemplo" onclick="buscar('Claude Anthropic')">🧠 Claude Anthropic</span>
+<!-- TAB AUTOMÁTICO -->
+<div id="tab-auto" class="panel activo">
+  <div class="card-area">
+    <div style="margin-bottom:12px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px">Fuentes activas — sin costo de créditos:</div>
+      <div class="fuentes-grid">
+        <span class="fuente-badge badge-rss">📰 Anthropic Blog</span>
+        <span class="fuente-badge badge-rss">📰 OpenAI Blog</span>
+        <span class="fuente-badge badge-rss">📰 HuggingFace</span>
+        <span class="fuente-badge badge-rss">📰 GitHub Blog</span>
+        <span class="fuente-badge badge-rss">📰 Reddit/ML</span>
+        <span class="fuente-badge badge-yt">▶️ YouTube API</span>
+        <span class="fuente-badge badge-x">✦ @AnthropicAI</span>
+        <span class="fuente-badge badge-x">✦ @OpenAI</span>
+        <span class="fuente-badge badge-x">✦ @sama</span>
+        <span class="fuente-badge badge-x">✦ @GoogleDeepMind</span>
+        <span class="fuente-badge badge-x">✦ @ylecun</span>
+        <span class="fuente-badge badge-x">✦ @MistralAI</span>
+      </div>
+      <div style="font-size:11px;color:#64748b">X usa 6 créditos/día de ScrapeCreators</div>
+    </div>
+    <button class="btn" onclick="cargarAutomatico()">📡 Ver Tendencias del Día</button>
+    <button class="btn btn-outline" onclick="forzarRefresh()">🔄 Forzar actualización</button>
   </div>
-
-  <button class="btn" id="btnBuscar" onclick="buscar()">
-    🔍 Buscar Tendencias
-  </button>
+  <div id="res-auto" class="resultados"></div>
 </div>
 
-<div id="resultados" class="resultados"></div>
+<!-- TAB MANUAL -->
+<div id="tab-manual" class="panel">
+  <div class="card-area">
+    <div class="input-group">
+      <label>Keyword a buscar:</label>
+      <input type="text" id="keyword" placeholder="agentes IA, Claude, ChatGPT..."/>
+    </div>
+    <div style="font-size:13px;color:#94a3b8;margin-bottom:8px">Plataformas (gastan créditos SC):</div>
+    <div class="checks">
+      <div class="check-btn sel" data-plat="tiktok" onclick="togglePlat(this)">🎵 TikTok</div>
+      <div class="check-btn" data-plat="linkedin" onclick="togglePlat(this)">💼 LinkedIn</div>
+      <div class="check-btn" data-plat="youtube" onclick="togglePlat(this)">▶️ YouTube</div>
+    </div>
+    <button class="btn" onclick="buscarManual()">🔍 Buscar ahora</button>
+  </div>
+  <div id="res-manual" class="resultados"></div>
+</div>
 
 <script>
-document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+let platsSel = ['tiktok'];
 
-async function buscar(keyword) {
-  const input = document.getElementById('keyword');
-  const query = keyword || input.value.trim();
-  if (keyword) input.value = keyword;
-  if (!query) { alert('Escribe qué quieres buscar'); return; }
+function cambiarTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('activo', (i===0&&id==='auto')||(i===1&&id==='manual')));
+  document.getElementById('tab-auto').classList.toggle('activo', id==='auto');
+  document.getElementById('tab-manual').classList.toggle('activo', id==='manual');
+}
 
-  const btn = document.getElementById('btnBuscar');
-  btn.disabled = true;
-  btn.textContent = '⏳ Buscando tendencias...';
+function togglePlat(el) {
+  const p = el.dataset.plat;
+  if (platsSel.includes(p)) { platsSel = platsSel.filter(x=>x!==p); el.classList.remove('sel'); }
+  else { platsSel.push(p); el.classList.add('sel'); }
+}
 
-  document.getElementById('resultados').innerHTML = `
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Buscando en X, TikTok y más...</p>
-      <p style="font-size:12px;margin-top:8px">Detectando lo viral e importante</p>
+function fuenteClass(tipo) {
+  return tipo==='rss'?'badge-rss':tipo==='youtube'?'badge-yt':tipo==='x'?'badge-x':tipo==='tiktok'?'badge-tk':'badge-li';
+}
+
+function renderCards(data, containerId) {
+  const el = document.getElementById(containerId);
+  if (!data.success) { el.innerHTML = `<div class="res-card"><p style="color:#f87171">❌ ${data.error}</p></div>`; return; }
+
+  let html = '';
+
+  if (data.tipo === 'automatico') {
+    html += `<div class="res-card" style="border-color:rgba(168,85,247,0.3)">
+      <div style="font-size:12px;color:#94a3b8">📊 Actualizado: ${new Date(data.timestamp).toLocaleString('es-ES')}</div>
+      <div style="font-size:12px;color:#64748b;margin-top:4px">
+        RSS: ${data.fuentes?.rss||0} &nbsp;|&nbsp; YouTube: ${data.fuentes?.youtube||0} &nbsp;|&nbsp; X: ${data.fuentes?.x||0}
+      </div>
     </div>`;
-
-  try {
-    const response = await fetch('/api/buscar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keyword: query })
-    });
-
-    const data = await response.json();
-    if (!data.success) throw new Error(data.error);
-
-    let html = '';
-
-    if (data.analisis && data.analisis.length > 0) {
-      html = data.analisis.map(t => {
-        const scoreClass = t.puntuacion >= 7 ? 'score-alto' : t.puntuacion >= 4 ? 'score-medio' : 'score-bajo';
-        return `
-          <div class="card">
-            <div class="card-header">
-              <div class="card-nombre">${t.nombre}</div>
-              <div class="score ${scoreClass}">${t.puntuacion}/10</div>
-            </div>
-            <span class="badge ${t.es_humo ? 'es-humo' : 'es-real'}">${t.es_humo ? '💨 Humo' : '✅ Real'}</span>
-            ${t.es_viral ? '<span class="badge es-viral">🔥 VIRAL</span>' : ''}
-            <p class="resumen">${t.resumen}</p>
-            <div class="areas">${(t.areas_beneficiadas || []).map(a => `<span class="area-tag">${a}</span>`).join('')}</div>
-            <div class="como-ayuda">💡 ${t.como_ayuda}</div>
-            <div class="fuente-tag">📍 ${t.fuente || ''}</div>
-          </div>`;
-      }).join('');
-    } else if (data.raw && data.raw.length > 0) {
-      html = data.raw.map(t => `
-        <div class="card">
-          <div class="stats">
-            <span style="color:#a5b4fc;font-weight:600">${t.fuente || ''}</span>
-            <span>❤️ ${t.likes || 0}</span>
-            <span>🔁 ${t.retweets || 0}</span>
-            ${t.vistas ? `<span>👁️ ${t.vistas}</span>` : ''}
-          </div>
-          <p class="resumen">${t.texto || ''}</p>
-        </div>`).join('');
-    } else {
-      html = '<div class="card"><p class="resumen">No se encontraron resultados.</p></div>';
-    }
-
-    document.getElementById('resultados').innerHTML = html;
-
-  } catch (error) {
-    document.getElementById('resultados').innerHTML = `
-      <div class="card"><p style="color:#f87171">❌ ${error.message}</p></div>`;
   }
 
-  btn.disabled = false;
-  btn.textContent = '🔍 Buscar Tendencias';
+  if (data.analisis && data.analisis.length > 0) {
+    html += data.analisis.map(t => {
+      const sc = t.puntuacion>=7?'score-a':t.puntuacion>=4?'score-m':'score-b';
+      return `<div class="res-card">
+        <div class="res-header">
+          <div class="res-nombre">${t.nombre}</div>
+          <div class="res-score ${sc}">${t.puntuacion}/10</div>
+        </div>
+        <div class="badges-row">
+          <span class="${t.es_humo?'badge-humo':'badge-real'}">${t.es_humo?'💨 Humo':'✅ Real'}</span>
+          ${t.es_viral?'<span class="badge-viral">🔥 Viral</span>':''}
+          ${(t.areas_beneficiadas||[]).map(a=>`<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(99,102,241,0.2);color:#a5b4fc">${a}</span>`).join('')}
+        </div>
+        <p class="res-texto">${t.resumen}</p>
+        <div class="consejo">💡 ${t.como_ayuda}</div>
+        <div class="res-meta" style="margin-top:8px"><span style="font-size:11px;color:#64748b">${t.fuente||''}</span></div>
+      </div>`;
+    }).join('');
+  } else if (data.raw && data.raw.length > 0) {
+    html += data.raw.map(t => `
+      <div class="res-card">
+        <div class="res-header" style="margin-bottom:6px">
+          <span class="fuente-badge ${fuenteClass(t.tipo)}">${t.fuente}</span>
+          <div class="res-meta">
+            ${t.likes?`<span>❤️ ${t.likes.toLocaleString()}</span>`:''}
+            ${t.retweets?`<span>🔁 ${t.retweets.toLocaleString()}</span>`:''}
+            ${t.vistas?`<span>👁️ ${t.vistas.toLocaleString()}</span>`:''}
+            ${t.fecha?`<span>${t.fecha}</span>`:''}
+          </div>
+        </div>
+        <p class="res-texto">${t.texto}</p>
+        ${t.url?`<div class="res-meta"><a href="${t.url}" target="_blank">Ver →</a></div>`:''}
+        ${t.canal?`<div class="res-meta"><span>📺 ${t.canal}</span></div>`:''}
+      </div>`).join('');
+  } else {
+    html = '<div class="res-card"><p class="res-texto">No se encontraron resultados.</p></div>';
+  }
+  el.innerHTML = html;
 }
+
+function mostrarLoading(containerId, msg) {
+  document.getElementById(containerId).innerHTML = `<div class="loading"><div class="spinner"></div><p>${msg}</p></div>`;
+}
+
+async function cargarAutomatico() {
+  mostrarLoading('res-auto', 'Cargando tendencias del día...');
+  try {
+    const r = await fetch('/api/tendencias');
+    const data = await r.json();
+    renderCards(data, 'res-auto');
+  } catch(e) {
+    document.getElementById('res-auto').innerHTML = `<div class="res-card"><p style="color:#f87171">❌ ${e.message}</p></div>`;
+  }
+}
+
+async function forzarRefresh() {
+  mostrarLoading('res-auto', 'Actualizando fuentes... (~20 segundos)');
+  try {
+    const r = await fetch('/api/refresh', { method:'POST' });
+    const data = await r.json();
+    renderCards(data, 'res-auto');
+  } catch(e) {
+    document.getElementById('res-auto').innerHTML = `<div class="res-card"><p style="color:#f87171">❌ ${e.message}</p></div>`;
+  }
+}
+
+async function buscarManual() {
+  const keyword = document.getElementById('keyword').value.trim();
+  if (!keyword) { alert('Escribe una keyword'); return; }
+  if (!platsSel.length) { alert('Selecciona al menos una plataforma'); return; }
+  mostrarLoading('res-manual', `Buscando en ${platsSel.join(', ')}...`);
+  try {
+    const r = await fetch('/api/buscar', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ keyword, plataformas: platsSel })
+    });
+    const data = await r.json();
+    renderCards(data, 'res-manual');
+  } catch(e) {
+    document.getElementById('res-manual').innerHTML = `<div class="res-card"><p style="color:#f87171">❌ ${e.message}</p></div>`;
+  }
+}
+
+document.getElementById('keyword').addEventListener('keydown', e => { if(e.key==='Enter') buscarManual(); });
+
+async function cargarStatus() {
+  try {
+    const r = await fetch('/api/status');
+    const s = await r.json();
+    const partes = [];
+    partes.push(`<span class="status-dot ${s.apis.scrapecreators?'dot-green':'dot-gray'}"></span>ScrapeCreators`);
+    partes.push(`<span class="status-dot ${s.apis.youtube?'dot-green':'dot-gray'}"></span>YouTube API`);
+    partes.push(`<span class="status-dot ${s.apis.anthropic?'dot-green':'dot-yellow'}"></span>Anthropic${s.apis.anthropic?'':' (sin saldo)'}`);
+    if (s.cache_auto) partes.push(`Cache: ${s.cache_auto.items} items`);
+    document.getElementById('statusBar').innerHTML = partes.join(' &nbsp;|&nbsp; ');
+  } catch(e) {
+    document.getElementById('statusBar').textContent = 'Sistema iniciando...';
+  }
+}
+
+cargarStatus();
 </script>
 </body>
 </html>
